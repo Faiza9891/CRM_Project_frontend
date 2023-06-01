@@ -1,25 +1,26 @@
-import logo from './logo.svg';
 import './App.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import Navbar from "./components/navbar/Navbar"
+import { Routes,Route } from 'react-router-dom';
+import Dashboard from "./components/Dashboard/Dashboard"
+import DataTable from './components/table/DataTable';
+import Addcustomer from './components/inputs/Addcustomer';
+import SubCustomerTable from './components/table/SubCustomerTable';
+
+
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+<Navbar/>
+      <Routes>
+        <Route path='/' element={<Dashboard/>}/>
+        <Route path='/customer' element={<DataTable/>}/>
+        <Route path='/subcustomer' element={<SubCustomerTable/>}/>
+      </Routes>
+    </>
   );
 }
 
 export default App;
+
