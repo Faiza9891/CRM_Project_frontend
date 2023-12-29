@@ -1,19 +1,17 @@
 import React from 'react'
 import { PieChart, Pie, Tooltip, Legend, Cell } from 'recharts';
 
-const ActiveStatusChart = () => {
+const ActiveStatusChart = ({activeCustomers,inactiveCustomers}) => {
     const data = [
-        { name: 'Category 1', value: 34 },
-        { name: 'Category 2', value: 20 },
-        { name: 'Category 3', value: 15 },
-        { name: 'Category 4', value: 25 },
-        { name: 'Category 5', value: 18 },
+        { name: 'Active', value: activeCustomers },
+        { name: 'Inactive', value: inactiveCustomers },
+       
       ];
       
-      const COLORS = ['#8884d8', '#83a6ed', '#8dd1e1', '#82ca9d', '#a4de6c'];
+      const COLORS = [ '#82ca9d', '#a4de6c'];
   return (
     <div>
-    <PieChart width={500} height={300}>
+    <PieChart width={350} height={300}>
     <Pie
       data={data}
       dataKey="value"

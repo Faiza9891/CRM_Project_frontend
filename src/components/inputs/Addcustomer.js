@@ -1,65 +1,164 @@
-import React, { useState } from 'react'
-import {ImCross} from 'react-icons/im'
+import React,{useState} from 'react'
 import {
-    Typography,
     TextField,
     Button,
-    MenuItem
+    MenuItem,
+    Box,
+    useTheme
   } from '@mui/material';
-  import './Addinput.css'
+  import Header from '../header/Header'
+import FlexBetween from '../navbar/FlexBetween';
+import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
+import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import Radio from '@mui/material/Radio';
+import RadioGroup from '@mui/material/RadioGroup';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import FormControl from '@mui/material/FormControl';
+import FormLabel from '@mui/material/FormLabel';
 
-const Addcustomer = ({ handleAddCustomer, handleEditCustomer, handleCancelEdit, editingCustomerId, name, setName, email, setEmail, phone, setPhone, address, setAddress,status,setStatus}) => {
-  const [closeCard,setCloseCard] = useState(false);
+
+
+const Addcustomer = ({ error,handleAddCustomer, handleEditCustomer, handleCancelEdit, editingCustomerId, name, setName, email, setEmail, phone, setPhone, address, setAddress,status,setStatus,createdAt,setCreatedAt,gender,setGender,setOpenForm}) => {
+  const [nameError, setNameError] = useState('');
+  const [emailError, setEmailError] = useState('');
+  const [phoneError, setPhoneError] = useState('');
+
+  const theme = useTheme();
   const options = [
     { value: "Active", label: "Active" },
     { value: "InActive", label: "InActive" },
   ];
-  const toggleCloseCard = () =>{
-    setCloseCard(!closeCard);
-  }
+  const handleGenderChange = (event) => {
+    setGender(event.target.value);
+  };
+
+  const handleNameChange = (e) => {
+    const value = e.target.value;
+    setName(value);
+
+    if (!value.trim()) {
+      setNameError('Name is required');
+    } else {
+      setNameError('');
+    }
+  };
+
+  const handleEmailChange = (e) => {
+    const value = e.target.value;
+    setEmail(value);
+
+    if (!value.trim()) {
+      setEmailError('Email is required');
+    } else if (!isValidEmail(value)) {
+      setEmailError('Invalid email format');
+    } else {
+      setEmailError('');
+    }
+  };
+
+  const handlePhoneChange = (e) => {
+    const value = e.target.value;
+    setPhone(value);
+
+    if (!value.trim()) {
+      setPhoneError('Phone is required');
+    } else if (!isValidPhone(value)) {
+      setPhoneError('Invalid phone format');
+    } else {
+      setPhoneError('');
+    }
+  };
+
+  const isValidEmail = (email) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
+  const isValidPhone = (phone) => {
+    const phoneRegex = /^\d{10}$/;
+    return phoneRegex.test(phone);
+  };
+
+  // const handleSubmit = (e) => {
+  //   e.preventDefault();
+
+  //   // Perform form submission logic
+  //   if (
+  //     name.trim() &&
+  //     isValidEmail(email) &&
+  //     phone.trim() &&
+  //     isValidPhone(phone)
+  //   ) {
+  //     // Valid form submission
+  //     if (editingCustomerId) {
+  //       handleEditCustomer();
+  //     } else {
+  //       handleAddCustomer();
+  //     }
+  //   } else {
+  //     // Invalid form submission
+  //     console.log('Form submission failed');
+  //   }
+  // };
+
   return (
     <>
-    { closeCard ? null : (<div className='card_sec'>
-<ImCross  onClick={toggleCloseCard}
-fontSize={30}
-style={{position:"absolute",right:"15px"}}
-/>
-    <Typography 
-    variant="h5" gutterBottom>{editingCustomerId ? 'Edit Customer' : 'Add Customer'}</Typography>
+    <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', zIndex: 1,backgroundColor: theme.palette.background.alt,padding:"2rem"}}>
+ <ArrowBackIosIcon
+ onClick = {() => setOpenForm(false)}
+style={{marginBottom:"2rem"}}
+ />
+ {editingCustomerId ? <Header title="Edit Customer"/> :  <Header title="Add Customer" />}
     <form 
     onSubmit={editingCustomerId ? handleEditCustomer : handleAddCustomer}>
+<Box  display="flex"  flexDirection="row" alignItems="center">
       <TextField
+      id="filled-basic"
       style={{margin: "1rem",display:"block"}}
       fullWidth
         label="Name"
-        variant="outlined"
+        variant="filled"
         margin="normal"
         value={name}
-        onChange={(e) => setName(e.target.value)}
+        onChange={handleNameChange}
+        error={!!nameError}
+        helperText={nameError}
+        // onChange={(e) => setName(e.target.value)}
       />
       <TextField
       style={{margin: "1rem" }}
       fullWidth
         label="Email"
-        variant="outlined"
+        variant="filled"
         margin="normal"
         value={email}
-        onChange={(e) => setEmail(e.target.value)}
+        onChange={handleEmailChange}
+        error={!!emailError}
+        helperText={emailError}
+        // onChange={(e) => setEmail(e.target.value)}
       />
       <TextField
       style={{margin: "1rem" ,display:"block"}}
       fullWidth
         label="Phone"
-        variant="outlined"
+        variant="filled"
         margin="normal"
         value={phone}
-        onChange={(e) => setPhone(e.target.value)}
+        onChange={handlePhoneChange}
+        error={!!emailError}
+        helperText={phoneError}
+        // onChange={(e) => setPhone(e.target.value)}
       />
+      </Box>
+      <Box  display="flex"  flexDirection="row" alignItems="center">
       <TextField
       style={{margin: "1rem",display:"block"}}
       fullWidth
         label="Address"
-        variant="outlined"
+        variant="filled"
         margin="normal"
         value={address}
         onChange={(e) => setAddress(e.target.value)}
@@ -68,8 +167,8 @@ style={{position:"absolute",right:"15px"}}
       style={{ margin: '1rem', display: 'block' }}
       fullWidth
       select
-      label="Select Option"
-      variant="outlined"
+      label="Select Status"
+      variant="filled"
       margin="normal"
       value={status}
       onChange={(e) => setStatus(e.target.value)}
@@ -80,36 +179,101 @@ style={{position:"absolute",right:"15px"}}
         </MenuItem>
       ))}
       </TextField>
-
-      <div className="mb-3">
-  <label for="exampleFormControlTextarea1" className="form-label">Imp Point Discusssed From Client Side - </label>
-  <textarea className="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
-</div>
-      <div className="mb-3">
-  <label for="exampleFormControlTextarea1" className="form-label">Imp Point Discussed From Our Side - </label>
-  <textarea className="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
-</div>
-      
+      </Box>
+      <div style={{ display: 'flex' }}>
+      <FormControl style={{ margin: '1rem' }}>
+        <FormLabel id="demo-row-radio-buttons-group-label">Gender</FormLabel>
+        <RadioGroup
+          row
+          aria-labelledby="demo-row-radio-buttons-group-label"
+          name="row-radio-buttons-group"
+          value={gender}
+          onChange={handleGenderChange}
+        >
+          <FormControlLabel value="female" control={<Radio />} label="Female" />
+          <FormControlLabel value="male" control={<Radio />} label="Male" />
+          <FormControlLabel value="other" control={<Radio />} label="Other" />
+        </RadioGroup>
+      </FormControl>
+    
+      <LocalizationProvider dateAdapter={AdapterDayjs}>
+        <DemoContainer components={['DatePicker']}>
+          <DatePicker
+            label="Date Of Registration"
+            inputStyle={{ outline: 'white', boxShadow: 'none' }}
+            PopperProps={{ style: { outline: 'white', boxShadow: 'none' } }}
+            value={createdAt}
+            onChange={(e) => setCreatedAt(e)}
+          />
+        </DemoContainer>
+      </LocalizationProvider>
+    </div>
+    <FlexBetween
+    sx={{
+      display: "flex",
+      justifyContent: "flex-end",
+      alignItems: "center"
+    }}
+    >
+    <Box 
+    >
+    {error && <div style={{color:"red"}}>Error: {error}</div>}
       <Button
+      sx={{
+        backgroundColor: theme.palette.secondary.light,
+        color: theme.palette.background.alt,
+        fontSize: "14px",
+        fontWeight: "bold",
+        padding: "10px 20px",
+        margin:"1rem",
+      }}
         type="submit"
         variant="contained"
-        color={editingCustomerId ? "primary" : "success"}
       >
-        {editingCustomerId ? "Update" : "Add"}
+        {editingCustomerId ? "Update" : "Submit"}
+        
       </Button>
-      {editingCustomerId && (
+      {!editingCustomerId && (
         <Button
-          variant="outlined"
+        sx={{
+          backgroundColor: "red",
+          color: theme.palette.background.alt,
+          fontSize: "14px",
+          fontWeight: "bold",
+          margin: "10px",
+          padding: "10px 20px",
+        }}
           color="error"
           onClick={handleCancelEdit}
         >
           Cancel
         </Button>
-      )}
+       
+      )} 
+      {editingCustomerId && (
+        <Button
+        sx={{
+          backgroundColor: "red",
+          color: theme.palette.background.alt,
+          fontSize: "14px",
+          fontWeight: "bold",
+          margin: "10px",
+          padding: "10px 20px",
+        }}
+          color="error"
+          onClick={handleCancelEdit}
+        >
+          Cancel
+        </Button>
+       
+      )} 
+      </Box>
+      </FlexBetween>
+    
     </form>
     
     
-    </div>)}
+    </div>
     </>
   )
 }
